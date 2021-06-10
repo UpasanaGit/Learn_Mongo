@@ -1,0 +1,256 @@
+db.createCollection("warehouse",{
+	validator:{
+		$jsonSchema:{
+			bsonType:"object",
+			required:["WarehouseId","Address","City","State","ZipCode","PhoneNumber","ProductList"],
+			properties:{
+				WarehouseId:{
+					bsonType:"double",
+					description:"'WarehouseId' must be an int value and is required"},
+				Address:{
+					bsonType:"string",
+					description:"'Address' must be an string and is required"},
+				City:{
+					bsonType:"string",
+					description:"'City' must be an string and is required"},
+				State:{
+					bsonType:"string",
+					description:"'State' must be an string and is required"},
+				ZipCode:{
+					bsonType:"string",
+					description:"'ZipCode' must be an string and is required"},
+				PhoneNumber:{
+					bsonType:"string",
+					description:"'PhoneNumber' must be an string and is required"},
+				ProductList:{
+					bsonType:["array"],
+					minItems:1,
+					items:{
+						bsonType:["object"],
+						required:["ProductId","ProductDesc","ProdQuantity","UnitPrice"],
+						description:"'ProductList' consist of stated fields.",
+						properties:{
+							ProductId:{
+								bsonType:"double",
+								description:"'ProductId' must be an double value and is required"},
+							ProductDesc:{
+								bsonType:"string",
+								description:"'ProductDesc' must be an string and is required"},
+							ProdQuantity:{
+								bsonType:"double",
+								description:"'ProdQuantity' must be an double value and is required"},
+							VendorName:{
+								bsonType:"string",
+								description:"'VendorName' must be an string"},
+							UnitPrice: {
+								bsonType: ["double", "decimal"],
+								description: "'UnitPrice' is required and is of double or decimal type"},
+							Category:{
+								bsonType:"string",
+								description:"'Category' must be an string"}
+						}
+					}
+				}
+			}
+		}
+	}
+});
+
+
+
+db.warehouse.insert({WarehouseId:1003,Address:"4th St Los Almitos",City:"San Diego",State:"CA",ZipCode:"90815",PhoneNumber:"776600",ProductList:
+[{ProductId:104,ProductDesc:"Product 4",ProdQuantity:2,UnitPrice:13.59,Category:"Snack"},{ProductId:105,ProductDesc:"Product 5",ProdQuantity:10,VendorName:"Test Inc.",UnitPrice:6.29,Category:"Bath"},
+{ProductId:106,ProductDesc:"Product 6",ProdQuantity:4,UnitPrice:8.99,Category:"Bed"}]});
+
+db.warehouse.insert({WarehouseId : 1002,
+        Address: "Main Drive St",
+        City : "Greenville",
+        State : "SC",
+        ZipCode : "90888",
+        PhoneNumber : "8888006666",
+        ProductList : [
+                {
+                        ProductId : 101,
+                        ProductDesc : "Product 1",
+                        ProdQuantity : 7,
+                        UnitPrice : 1.49,
+                        Category : "Utilities"
+                },
+                {
+                        ProductId : 102,
+                        ProductDesc : "Product 2",
+                        ProdQuantity : 1,
+                        VendorName : "ABC Inc.",
+                        UnitPrice : 2.19,
+                        Category : "Snack"
+                },
+                {
+                        ProductId : 103,
+                        ProductDesc : "Product 3",
+                        ProdQuantity : 5,
+                        VendorName : "MNO Corp.",
+                        UnitPrice : 0.99,
+                        Category : "Utilities"
+                }
+        ]
+});
+
+db.warehouse.insert({WarehouseId : 1001,
+        Address : "Ocean Bvld",
+        City : "Portland",
+        State : "OH",
+        ZipCode : "90825",
+        PhoneNumber : "5525522778",
+        ProductList : [
+                {
+                        ProductId : 101,
+                        ProductDesc : "Product 1",
+                        ProdQuantity : 4,
+                        UnitPrice : 1.49,
+                        Category : "Utilities"
+                },
+                {
+                        ProductId : 102,
+                        ProductDesc : "Product 2",
+                        ProdQuantity : 3,
+                        VendorName : "ABC Inc.",
+                        UnitPrice : 2.19,
+                        Category : "Snack"
+                }
+        ]
+});
+
+db.createCollection("customer");
+
+db.customer.insert({CustomerId:101,FirstName:"Smith",LastName:"Welch",Address:"55 Rose St",City:"Long Beach",State:"CA",ZipCode:"90814",MobileNumber:"1110001111",DOB:new Date(1994,10,05)});
+
+db.customer.insertMany([{CustomerId: 104,FirstName: "Joe",LastName:"Doe",Address:"Palm St",City:"Malibu",State:"CA",ZipCode:"90817",MobileNumber:"4440004444",DOB:new Date(1993,12,15)},
+{CustomerId:102,FirstName:"Justin",LastName:"Taylor",Address:"Orange Ave",City:"Boulder",State:"CO",ZipCode:"90815",MobileNumber:"2220004444",DOB:new Date(1995,06,25)},
+{CustomerId: 103,FirstName: "Christine",LastName:"Hugh",Address:"Almond Ave",City:"Manhattan",State:"NY",ZipCode:"90816",MobileNumber:"2220003333",DOB:new Date(1994,01,13)}]);
+
+
+db.createCollection("orders",{
+	validator:{
+		$jsonSchema:{
+			bsonType:"object",
+			required:["OrderId","CustomerId","ItemList","TotalPrice","OrderDate","Status"],
+			properties:{
+				OrderId:{
+					bsonType:"double",
+					description:"'OrderId' must be an int value and is required"},
+				CustomerId:{
+					bsonType:"double",
+					description:"'CustomerId' must be an int value and is required"},
+				ItemList:{
+					bsonType:"array",
+					minItems:1,
+					items:{
+						bsonType:"object",
+						description:"'ItemList' is required and an array consist of elements.",
+						required:["ProductId","Quantity"],
+						properties:{
+							ProductId:{
+								bsonType:"double",
+								description:"'ProductId' must be an double value and is required"},
+							Quantity:{
+								bsonType:"double",
+								description:"'ProdQuantity' must be an double value and is required"}
+						}
+					}
+				},
+				TotalPrice:{
+					bsonType:["double","decimal"],
+					description: "'TotalPrice' is required and is of double or decimal type"},
+				OrderDate:{
+					bsonType:"date",
+					description:"'OrderDate' is required and should be a date"},
+				ShippingDate:{
+					bsonType:"date",
+					description:"'ShippingDate' should be a date"},	
+				Status:{
+					enum:["Pending","Delivered","Shipped","Cancelled"],
+					description:"'Status' must be an string and is required"},
+				Signed:{
+					bsonType:"bool",
+					description:"'Signed' should be boolean"}
+				}
+			}
+		}
+	});
+				
+
+db.orders.insert({OrderId:1101,CustomerId:101,ItemList:[{ProductId:104,Quantity:1},{ProductId:102,Quantity:2}],TotalPrice:17.97,OrderDate:new Date(2021,05,23),Status:"Pending",Signed:false});
+
+
+db.orders.insertMany([{OrderId:1102,CustomerId:101,ItemList:[{ProductId:103,Quantity:10}],TotalPrice:9.9,OrderDate:new Date(2021,04,20),ShippingDate:new Date(2021,04,25),Status:"Shipped"},
+{OrderId:1103,CustomerId:103,ItemList:[{ProductId:101,Quantity:4},{ProductId:105,Quantity:3}],TotalPrice:24.83,OrderDate:new Date(2021,06,01),ShippingDate:new Date(2021,06,02),Status:"Delivered",Signed:true},
+{OrderId:1104,CustomerId:102,ItemList:[{ProductId:106,Quantity:2}],TotalPrice:17.98,OrderDate:new Date(2021,05,22),Status:"Cancelled"}]);
+
+
+//delete all documents from a collection
+db.customer.deleteMany({});
+
+//update order status and shipping date
+db.orders.update({OrderId:1101},{$set:{Status:"Shipped",ShippingDate:new Date(2021,06,26)}});
+
+//update the unit price by 1 at the 0th index Product in each warehouse
+db.warehouse.updateMany({WarehouseId:{$ne:null}},{$inc:{"ProductList.0.UnitPrice":1}});
+
+//update the unit price at the 1st index Product by 10%
+db.warehouse.updateMany({WarehouseId:{$ne:null}},{$mul: {"ProductList.1.UnitPrice": NumberDecimal("1.1")}});
+
+
+//find some selected details from the collections
+db.warehouse.find({WarehouseId:1001},{"ProductList.ProductId":1,"ProductList.Category":1,"ProductList.UnitPrice":1,"ProductList.ProdQuantity":1}).pretty();
+
+// get all order details on the basis of id
+db.orders.find({OrderId:1102}).pretty();
+
+// get order details sorted by purchase total price in descending order
+db.orders.find().sort({TotalPrice:-1}).pretty();
+
+// get count of products according to their category in warehouse and sort by asc
+db.warehouse.aggregate([
+  { "$unwind": "$ProductList" },
+  { "$group": {
+    "_id": "$ProductList.Category",
+    "count": { "$sum": 1 }
+  }},
+  { "$sort": { "count": 1 } }
+]);
+
+
+// get average sales between a date range
+(while using group _id is mandatory to put in the query)
+
+db.orders.aggregate(
+    [{
+       $match: {
+          OrderDate: {
+             $gte: new Date('2021-05-18'),
+             $lte: new Date('2021-07-10')
+          }
+       }},{
+ $group: {
+    _id: null,
+    avgAmount: { $avg:"$TotalPrice"},
+    COUNT: {$sum: 1}
+ }}]);
+ 
+
+// get order month-yearly report
+db.orders.aggregate([
+{ 
+	$group:{
+		_id:{Month:{$month:"$OrderDate"}, Year:{$year:"$OrderDate"}},
+		"Number Orders": {$sum: 1},
+		"Max Bill":{$max:"$TotalPrice"},
+		"Total Amount":{$sum:"$TotalPrice"}
+	}
+},
+	{$sort:{month:1, year:1, _id:1}}
+]);
+
+
+
+
